@@ -1,14 +1,14 @@
-name: hola-mundo
-on : [push]
+name: Primer CI
+on : [push, pull]
 jobs:
-  hola-mundo:
+  first-actions:
     runs-on: ubuntu-latest
     steps:
-      - name: Public IP
-        id: ip
-        uses: haythem/public-ip@v1.3
-      - name: Hola Mundo
-        run: echo !Hola mundo desde ${{steps.ip.output.ipv4}}!
-
+      - name: Checkcout
+        uses: actions/checkout@v3
+      - name: Definir variable
+        run: echo "USERNAME=${{ github.actor}}" >> $GITHUB_ENV
+      - name:  scr
+        run: python scr/1-primer_github_actions.py
 
 
