@@ -1,8 +1,10 @@
 name: Segundo CI
 
 on:
-  schedule:
-    - cron: '*/1 * * * *'  # Ejecutar cada minuto
+  workflow_run:
+    workflows: ["Primer CI"]
+    types:
+      - completed
 
 jobs:
   second-actions:
