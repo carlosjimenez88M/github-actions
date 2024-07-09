@@ -1,5 +1,5 @@
 name: Primer CI
-on : [push]
+on : [push, pull_request]
 jobs:
   first-actions:
     runs-on: ubuntu-latest
