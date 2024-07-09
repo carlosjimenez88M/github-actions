@@ -242,3 +242,247 @@ Es una acción que se va arrojar en github action
 ### Runner
 
 Un servidor donde corren los pasos que se definen en ci-cd
+
+
+
+
+### Eventos o Triggers
+
+* **push**
+* **pull_request**
+* **issues**
+* **issue_comment**
+* **workflow_dispatch**
+* **schedule**
+
+### Explicación de los eventos
+
+#### **push**
+El evento `push` se desencadena cada vez que se realiza un `push` a la rama especificada del repositorio.
+
+```yaml
+on:
+  push:
+    branches:
+      - 'main'       # El flujo de trabajo se ejecutará solo cuando se haga push a la rama 'main'
+    paths:
+      - '**.py'      # El flujo de trabajo se ejecutará solo cuando se modifiquen archivos con la extensión .py
+```
+
+#### **pull_request**
+El evento `pull_request` se desencadena cada vez que se abre o etiqueta una solicitud de extracción (PR) hacia la rama especificada del repositorio.
+
+```yaml
+on:
+  pull_request:
+    types:
+      - [opened, labeled]  # El flujo de trabajo se ejecutará cuando se abra o etiquete una PR
+    branches:
+      - 'main'             # La PR debe apuntar a la rama 'main'
+    paths:
+      - '**.py'            # El flujo de trabajo se ejecutará solo si la PR modifica archivos con la extensión .py
+```
+
+#### **issues**
+El evento `issues` se desencadena cada vez que se crea o modifica un problema (issue) en el repositorio.
+
+```yaml
+on:
+  issues:
+    types:
+      - [opened, edited]  # El flujo de trabajo se ejecutará cuando se abra o edite un issue
+```
+
+#### **issue_comment**
+El evento `issue_comment` se desencadena cada vez que se añade un comentario a un problema (issue) o una solicitud de extracción (PR).
+
+```yaml
+on:
+  issue_comment:
+    types:
+      - created           # El flujo de trabajo se ejecutará cuando se cree un nuevo comentario
+```
+
+#### **workflow_dispatch**
+El evento `workflow_dispatch` permite que un flujo de trabajo sea iniciado manualmente desde la interfaz de GitHub.
+
+```yaml
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+```
+
+#### **schedule**
+El evento `schedule` permite que un flujo de trabajo sea ejecutado en horarios programados utilizando cron syntax.
+
+```yaml
+on:
+  schedule:
+    - cron: '0 0 * * *'    # El flujo de trabajo se ejecutará todos los días a la medianoche UTC
+```
+
+### Ejemplo Completo de Archivo YAML
+
+Combina múltiples eventos en un solo flujo de trabajo para mayor flexibilidad:
+
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '**.py'
+  pull_request:
+    types:
+      - [opened, labeled]
+    branches:
+      - 'main'
+    paths:
+      - '**.py'
+  issues:
+    types:
+      - [opened, edited]
+  issue_comment:
+    types:
+      - created
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m unittest discover -s tests
+```
+
+### Explicación del Ejemplo Completo
+
+- **push**: Ejecuta el flujo de trabajo cuando se hace push a la rama `main` y se modifican archivos `.py`.
+- **pull_request**: Ejecuta el flujo de trabajo cuando se abre o etiqueta una PR hacia la rama `main` y se modifican archivos `.py`.
+- **issues**: Ejecuta el flujo de trabajo cuando se abre o edita un issue.
+- **issue_comment**: Ejecuta el flujo de trabajo cuando se crea un nuevo comentario en un issue o PR.
+- **workflow_dispatch**: Permite iniciar el flujo de trabajo manualmente desde la interfaz de GitHub.
+- **schedule**: Ejecuta el flujo de trabajo todos los días a la medianoche UTC.
+
+### Jobs y Steps
+
+- **jobs**: Define los trabajos que se ejecutarán. En este caso, solo hay un trabajo llamado `build`.
+- **steps**: Define los pasos dentro del trabajo `build`.
+  - **Checkout code**: Clona el repositorio.
+  - **Set up Python**: Configura Python 3.8.
+  - **Install dependencies**: Instala las dependencias del proyecto desde el archivo `requirements.txt`.
+  - **Run tests**: Ejecuta las pruebas unitarias en el directorio `tests`.
+
+
+
+
+### ¿Qué es Cron?
+Cron es un sistema de programación de tareas que permite ejecutar comandos o scripts en momentos específicos, de manera repetitiva. Utiliza una sintaxis específica para definir la frecuencia de ejecución.
+
+### Sintaxis de Cron
+La sintaxis de cron está compuesta por cinco campos que representan diferentes unidades de tiempo:
+1. **Minuto** (0 - 59)
+2. **Hora** (0 - 23)
+3. **Día del mes** (1 - 31)
+4. **Mes** (1 - 12)
+5. **Día de la semana** (0 - 7) (0 y 7 representan el domingo)
+
+Cada campo puede tener valores específicos, rangos de valores, listas de valores separados por comas, o valores de paso. Aquí tienes algunos ejemplos de cron:
+
+- `* * * * *`: Se ejecuta cada minuto.
+- `0 * * * *`: Se ejecuta cada hora (a la hora en punto).
+- `0 0 * * *`: Se ejecuta diariamente a medianoche.
+- `0 0 1 * *`: Se ejecuta mensualmente, el primer día del mes a medianoche.
+- `0 0 * * 0`: Se ejecuta semanalmente, todos los domingos a medianoche.
+
+### Usar Cron en GitHub Actions
+Para utilizar cron en GitHub Actions, debes definir el evento `schedule` en tu archivo YAML con la expresión cron deseada.
+
+### Ejemplo Simple
+Vamos a ver cómo configurar un flujo de trabajo para que se ejecute diariamente a medianoche:
+
+```yaml
+name: Scheduled CI
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Se ejecuta todos los días a medianoche UTC
+
+jobs:
+  scheduled-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m unittest discover -s tests
+```
+
+### Explicación del Ejemplo
+- **on:**
+  - **schedule:** Define que el flujo de trabajo se ejecutará en un horario programado.
+  - **cron:** `0 0 * * *` indica que el flujo de trabajo se ejecutará todos los días a medianoche UTC.
+
+- **jobs:** Define un trabajo llamado `scheduled-job` que se ejecuta en una máquina `ubuntu-latest`.
+
+- **steps:** Define los pasos que se ejecutarán dentro del trabajo `scheduled-job`:
+  - **Checkout code:** Clona el repositorio.
+  - **Set up Python:** Configura Python 3.8.
+  - **Install dependencies:** Instala las dependencias del proyecto.
+  - **Run tests:** Ejecuta las pruebas unitarias.
+
+### Más Ejemplos de Cron
+- Ejecutar cada hora:
+  ```yaml
+  on:
+    schedule:
+      - cron: '0 * * * *'
+  ```
+- Ejecutar todos los lunes a las 8 AM:
+  ```yaml
+  on:
+    schedule:
+      - cron: '0 8 * * 1'
+  ```
+- Ejecutar el primer día de cada mes a las 6 AM:
+  ```yaml
+  on:
+    schedule:
+      - cron: '0 6 1 * *'
+  ```
+
+### Notas Importantes
+- **UTC:** La programación cron en GitHub Actions utiliza el Tiempo Universal Coordinado (UTC). Asegúrate de convertir tu horario local a UTC si es necesario.
+- **Pruebas:** Puedes usar herramientas como [crontab.guru](https://crontab.guru/) para verificar y probar tus expresiones cron.
+
+Usar cron en GitHub Actions te permite automatizar tareas que necesitan ejecutarse en horarios específicos, lo que es útil para tareas de mantenimiento, actualizaciones, backups, y mucho más.
