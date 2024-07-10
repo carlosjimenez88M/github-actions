@@ -20,35 +20,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Check execution count
-        id: check
-        run: |
-          if [ ! -f execution_count.txt ]; then
-            echo "0" > execution_count.txt
-          fi
-          count=$(cat execution_count.txt)
-          if [ $count -ge 3 ]; then
-            echo "Exiting after 3 executions."
-            exit 0
-          fi
-          echo "Execution count: $count"
-          echo "::set-output name=count::$count"
 
       - name: Run second script
         if: steps.check.outputs.count != '3'
         run: python scr/2-datetime_now.py
 
-      - name: Update execution count
-        if: steps.check.outputs.count != '3'
-        run: |
-          count=$(cat execution_count.txt)
-          count=$((count + 1))
-          echo $count > execution_count.txt
-          echo "Updated execution count to $count"
 
-      - name: Commit and push execution count
-        if: steps.check.outputs.count != '3'
-        run: |
-          git add execution_count.txt
-          git commit -m "Update execution count to $count"
-          git push origin HEAD
