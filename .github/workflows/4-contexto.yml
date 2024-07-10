@@ -1,0 +1,10 @@
+name : Variables de contexto
+run-name: Usando contextos
+
+on : push
+jobs:
+  check-main:
+    if: ${{github.ref=='refs/heads/main'}}
+    runs-on: ubuntu-latest
+    steps:
+     - run: echo "Haciendo una simulación de despliegue en la rama $GITHUB_REF"
