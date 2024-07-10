@@ -5,20 +5,20 @@ on:
     workflows: ["Primer CI"]
     types:
       - completed
+  schedule:
+    - cron: '*/1 * * * *'  # Ejecutar cada minuto
 
 jobs:
   second-actions:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout with write permissions
         uses: actions/checkout@v3
-
-      - name: Download trigger file
-        uses: actions/download-artifact@v2
         with:
-          name: trigger-file
-          path: .
+          persist-credentials: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Check execution count
         id: check
@@ -46,9 +46,9 @@ jobs:
           echo $count > execution_count.txt
           echo "Updated execution count to $count"
 
-      - name: Upload updated execution count
+      - name: Commit and push execution count
         if: steps.check.outputs.count != '3'
-        uses: actions/upload-artifact@v2
-        with:
-          name: execution-count
-          path: execution_count.txt
+        run: |
+          git add execution_count.txt
+          git commit -m "Update execution count to $count"
+          git push origin HEAD

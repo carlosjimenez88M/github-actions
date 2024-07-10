@@ -16,11 +16,22 @@ jobs:
       - name: Run first script
         run: python scr/1-primer_github_actions.py
 
-      - name: Create trigger file
-        run: echo "trigger" > trigger.txt
-
-      - name: Upload trigger file
-        uses: actions/upload-artifact@v2
+      - name: Checkout with write permissions
+        uses: actions/checkout@v3
         with:
-          name: trigger-file
-          path: trigger.txt
+          persist-credentials: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Create execution count file if not exists
+        run: |
+          if [ ! -f execution_count.txt ]; then
+            echo "0" > execution_count.txt
+            git add execution_count.txt
+            git commit -m "Create execution count file"
+            git push origin HEAD
