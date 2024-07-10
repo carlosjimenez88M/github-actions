@@ -28,10 +28,4 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: Create execution count file if not exists
-        run: |
-          if [ ! -f execution_count.txt ]; then
-            echo "0" > execution_count.txt
-            git add execution_count.txt
-            git commit -m "Create execution count file"
-            git push origin HEAD
+      
