@@ -18,32 +18,25 @@ on:
         type: string
   schedule:
     - cron: '0 8 * * *'
-  jobs:
-    manual-job:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/chechout@v3
-        - name: Definir usuario
-          uses: echo "USERNAME=${{ inputs.name}}" >> $GITHUB_ENV
-        - name: Correr Script
-          uses: python scr/1-primer_github_actions.py
 
-    auto-jobs:
-      if: ${{github.event_name != 'workflow_dispatch'}}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3
-        - name: Definir variable
-          run: echo "USERNAME=${{ github.actor }}" >> $GITHUB_ENV
-        - name: Correr script
-          run: python scr/1-primer_github_actions.py
+jobs:
+  manual-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Definir usuario
+        run: echo "USERNAME=${{ github.event.inputs.ejecutor }}" >> $GITHUB_ENV
+      - name: Correr Script
+        run: python scr/1-primer_github_actions.py
 
-
-
-
-
-
-
-
+  auto-jobs:
+    if: ${{ github.event_name != 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Definir variable
+        run: echo "USERNAME=${{ github.actor }}" >> $GITHUB_ENV
+      - name: Correr script
+        run: python scr/1-primer_github_actions.py
