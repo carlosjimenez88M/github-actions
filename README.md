@@ -486,3 +486,36 @@ jobs:
 - **Pruebas:** Puedes usar herramientas como [crontab.guru](https://crontab.guru/) para verificar y probar tus expresiones cron.
 
 Usar cron en GitHub Actions te permite automatizar tareas que necesitan ejecutarse en horarios específicos, lo que es útil para tareas de mantenimiento, actualizaciones, backups, y mucho más.
+
+
+
+## Temas a revisar
+
+Revisar el siguiente link : <https://education.github.com/git-cheat-sheet-education.pdf>
+
+
+## Resolviendo conflictos 
+
+# Crear y cambiar a la rama 'main'
+git checkout -b main
+
+# Hacer un cambio en 'main'
+echo "Línea en main" > archivo.txt
+git add archivo.txt
+git commit -m "Cambio en main"
+
+# Crear y cambiar a la rama 'feature'
+git checkout -b feature
+
+# Hacer un cambio en 'feature'
+echo "Línea en feature" > archivo.txt
+git add archivo.txt
+git commit -m "Cambio en feature"
+
+
+git checkout main
+git merge feature
+
+
+git add archivo.txt
+git commit -m "Resuelto conflicto entre main y feature"

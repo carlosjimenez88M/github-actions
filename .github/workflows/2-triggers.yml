@@ -6,7 +6,7 @@ on:
     types:
       - completed
   schedule:
-    - cron: '*/1 * * * *'  # Ejecutar cada minuto
+    - cron: '*/10 * * * *'  # Ejecutar cada minuto
 
 jobs:
   second-actions:
